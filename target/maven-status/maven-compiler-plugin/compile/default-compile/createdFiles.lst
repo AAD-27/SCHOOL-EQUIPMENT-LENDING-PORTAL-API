@@ -23,6 +23,7 @@ com\bits\school\equipment\service\EquipmentService.class
 com\bits\school\equipment\dto\UserDto.class
 com\bits\school\equipment\repository\UserRepository.class
 com\bits\school\equipment\dao\impl\BorrowRequestDaoImpl.class
+com\bits\school\equipment\util\AuthUtil.class
 com\bits\school\equipment\dao\UserDao.class
 com\bits\school\equipment\dao\impl\EquipmentDaoImpl.class
 com\bits\school\equipment\entity\User$Role.class
