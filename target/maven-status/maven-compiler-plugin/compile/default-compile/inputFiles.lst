@@ -1,16 +1,17 @@
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\controller\EquipmentController.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\service\impl\EquipmentServiceImpl.java
-D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\dto\EquipmentDto.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\dao\EquipmentDao.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\service\UserService.java
+D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\entity\Category.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\repository\EquipmentRepository.java
-D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\dto\UserDto.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\service\BorrowRequestService.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\util\AuthUtil.java
+D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\entity\Role.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\service\impl\AuthServiceImpl.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\dto\LoginRequest.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\service\impl\BorrowRequestServiceImpl.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\entity\User.java
+D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\repository\CategoryRepository.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\dao\UserDao.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\dto\BorrowRequestDto.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\dao\impl\UserDaoImpl.java
@@ -18,6 +19,7 @@ D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\sc
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\entity\Equipment.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\service\impl\UserServiceImpl.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\repository\UserRepository.java
+D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\repository\RoleRepository.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\EquipmentLendingApplication.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\service\EquipmentService.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\dao\BorrowRequestDao.java

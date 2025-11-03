@@ -1,0 +1,325 @@
+------------------------------------------------
+Auth Service
+
+1A. Get all roles: GET http://localhost:8083/equipment-service/api/auth/roles
+(Public endpoint - no token required)
+
+response: [
+{
+"id": 3,
+"role": "ADMIN"
+},
+{
+"id": 2,
+"role": "STAFF"
+},
+{
+"id": 1,
+"role": "STUDENT"
+}
+]
+
+1.a Get all categories: GET http://localhost:8083/equipment-service/api/auth/categories
+(Public endpoint - no token required)
+response: [
+{
+"id": 1,
+"category": "Electronics"
+},
+{
+"id": 4,
+"category": "Lab Equipment"
+},
+{
+"id": 5,
+"category": "Musical Instruments"
+},
+{
+"id": 3,
+"category": "Photography"
+},
+{
+"id": 2,
+"category": "Sports"
+},
+{
+"id": 6,
+"category": "Stationary"
+}
+]
+
+2. Login: POST http://localhost:8083/equipment-service/api/auth/login
+request: {
+"email": "admin@school.com",
+"password": "admin123"
+}
+
+response: {
+"token": "TOKEN-59eeb1e9-fc33-462f-9b6c-b984a8b94fce",
+"userId": 1,
+"name": "Admin User",
+"email": "admin@school.com",
+"role": "ADMIN"
+}
+
+3. Signup: POST http://localhost:8083/equipment-service/api/auth/signup
+request: {
+"name": "Ameya",
+"email": "amey@bits.com",
+"password": "amey123",
+"role": "STUDENT"
+}
+
+response:{
+"token": "TOKEN-422ab788-c974-424a-8eb6-3e025e07c828",
+"userId": 7,
+"name": "Ameya",
+"email": "amey@bits.com",
+"role": "STUDENT"
+}
+
+------------------------------------------------
+-Equipment service
+(Authorization needed for all api -- Admin token)
+Get all equipments: GET http://localhost:8083/equipment-service/api/equipment
+
+response:[
+{
+"id": 1,
+"name": "Laptop Dell Latitude",
+"category": "Electronics",
+"conditionDescription": "Good condition, suitable for programming",
+"quantity": 10,
+"availableQuantity": 10
+},
+{
+"id": 2,
+"name": "Projector Epson",
+"category": "Electronics",
+"conditionDescription": "Excellent condition, 1080p",
+"quantity": 5,
+"availableQuantity": 5
+},
+{
+"id": 3,
+"name": "Football Kit",
+"category": "Sports",
+"conditionDescription": "New, includes jersey and boots",
+"quantity": 20,
+"availableQuantity": 20
+}
+]
+
+2. Add Equipment: POST http://localhost:8083/equipment-service/api/equipment
+request: {
+"name": "Keyboard",
+"category": "Electronics",
+"conditionDescription": "Good",
+"quantity": 13,
+"availableQuantity": 5
+}
+
+response: {
+"id": 12,
+"name": "Keyboard",
+"category": "Electronics",
+"conditionDescription": "Good",
+"quantity": 13,
+"availableQuantity": 5
+}
+
+3. Edit: PUT http://localhost:8083/equipment-service/api/equipment/12
+request:     {
+"id": 12,
+"name": "Keyboard",
+"category": "Electronics",
+"conditionDescription": "Good",
+"quantity": 10,
+"availableQuantity": 5
+}
+
+response:{
+"id": 12,
+"name": "Keyboard",
+"category": "Electronics",
+"conditionDescription": "Good",
+"quantity": 10,
+"availableQuantity": 5
+}
+
+4. Delete: DELETE  http://localhost:8083/equipment-service/api/equipment/12
+
+response: Equipment deleted successfully
+
+------------------------------------------------
+-Borrow service
+(Authorization needed for all APIs. Students can create and view their own requests; STAFF/ADMIN can view all and approve/return.)
+
+1. Create borrow request: POST http://localhost:8083/equipment-service/api/borrow/request
+Headers:
+Authorization: Bearer TOKEN-...
+(DONE BY STUDENT)
+request:
+{
+"equipment": { "id": 1 },
+"quantityRequested": 2,
+"fromDate": "2025-11-05T09:00:00",
+"toDate": "2025-11-06T17:00:00"
+}
+
+Possible validation responses (status 210):
+- "Please enter a valid quantity"
+- "<Equipment Name> is invalid"
+- "<Equipment Name> is not available"
+
+success response (status 200):
+
+{
+"id": 4,
+"requester": {
+"id": 5,
+"name": "Ameya Dikshit",
+"email": "ameya@bits.com",
+"password": "ameya123",
+"role": "STUDENT"
+},
+"equipment": {
+"id": 1,
+"name": "Laptop Dell Latitude",
+"category": "Electronics",
+"conditionDescription": "Good condition, suitable for programming",
+"quantity": 10,
+"availableQuantity": 10
+},
+"quantityRequested": 2,
+"fromDate": "2025-11-05T09:00:00",
+"toDate": "2025-11-06T17:00:00",
+"status": "PENDING"
+}
+
+2. List borrow requests: GET http://localhost:8083/equipment-service/api/borrow
+Headers:
+Authorization: Bearer TOKEN-...
+(DONE BY STUDENT)
+
+Behavior:
+- Student token: returns only that student's requests
+- Staff/Admin token: returns all requests
+
+response (example):
+[
+{
+"id": 4,
+"requester": {
+"id": 5,
+"name": "Ameya Dikshit",
+"email": "ameya@bits.com",
+"password": "ameya123",
+"role": "STUDENT"
+},
+"equipment": {
+"id": 1,
+"name": "Laptop Dell Latitude",
+"category": "Electronics",
+"conditionDescription": "Good condition, suitable for programming",
+"quantity": 10,
+"availableQuantity": 10
+},
+"quantityRequested": 2,
+"fromDate": "2025-11-05T09:00:00",
+"toDate": "2025-11-06T17:00:00",
+"status": "PENDING"
+}
+]
+
+3. Approve request: POST http://localhost:8083/equipment-service/api/borrow/{id}/approve
+(Requires STAFF or ADMIN token)
+Headers:
+Authorization: Bearer TOKEN-...
+
+response on success (status 200):
+{
+"id": 4,
+"requester": {
+"id": 5,
+"name": "Ameya Dikshit",
+"email": "ameya@bits.com",
+"password": "ameya123",
+"role": "STUDENT"
+},
+"equipment": {
+"id": 1,
+"name": "Laptop Dell Latitude",
+"category": "Electronics",
+"conditionDescription": "Good condition, suitable for programming",
+"quantity": 10,
+"availableQuantity": 8
+},
+"quantityRequested": 2,
+"fromDate": "2025-11-05T09:00:00",
+"toDate": "2025-11-06T17:00:00",
+"status": "APPROVED"
+}
+
+validation response when stock is insufficient (status 210):
+"Insufficient quantity to approve"
+
+4. Mark as returned: POST http://localhost:8083/equipment-service/api/borrow/{id}/return
+(Requires STAFF or ADMIN token)
+Headers:
+Authorization: Bearer TOKEN-...
+
+response on success (status 200):
+{
+"id": 4,
+"requester": {
+"id": 5,
+"name": "Ameya Dikshit",
+"email": "ameya@bits.com",
+"password": "ameya123",
+"role": "STUDENT"
+},
+"equipment": {
+"id": 1,
+"name": "Laptop Dell Latitude",
+"category": "Electronics",
+"conditionDescription": "Good condition, suitable for programming",
+"quantity": 10,
+"availableQuantity": 10
+},
+"quantityRequested": 2,
+"fromDate": "2025-11-05T09:00:00",
+"toDate": "2025-11-06T17:00:00",
+"status": "RETURNED"
+}
+
+
+
+5. Mark as Reject: POST http://localhost:8083/equipment-service/api/borrow/{id}/reject
+(Requires STAFF or ADMIN token)
+Headers:
+Authorization: Bearer TOKEN-...
+
+response on success (status 200):
+{
+"id": 5,
+"requester": {
+"id": 5,
+"name": "Ameya Dikshit",
+"email": "ameya@bits.com",
+"password": "ameya123",
+"role": "STUDENT"
+},
+"equipment": {
+"id": 2,
+"name": "Projector Epson",
+"category": "Electronics",
+"conditionDescription": "Excellent condition, 1080p",
+"quantity": 5,
+"availableQuantity": 5
+},
+"quantityRequested": 1,
+"fromDate": "2025-11-05T09:00:00",
+"toDate": "2025-11-06T17:00:00",
+"status": "REJECTED"
+}

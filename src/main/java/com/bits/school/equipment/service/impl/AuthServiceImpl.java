@@ -4,23 +4,33 @@ import com.bits.school.equipment.dto.AuthResponse;
 import com.bits.school.equipment.dto.LoginRequest;
 import com.bits.school.equipment.dto.SignupRequest;
 import com.bits.school.equipment.entity.User;
+import com.bits.school.equipment.entity.Role;
+import com.bits.school.equipment.entity.Category;
 import com.bits.school.equipment.service.AuthService;
 import com.bits.school.equipment.service.UserService;
+import com.bits.school.equipment.repository.RoleRepository;
+import com.bits.school.equipment.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Sort;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
     private final UserService userService;
+    private final RoleRepository roleRepository;
+    private final CategoryRepository categoryRepository;
     private final Map<String, Long> tokenStore = new ConcurrentHashMap<>();
 
-    public AuthServiceImpl(UserService userService) {
+    public AuthServiceImpl(UserService userService, RoleRepository roleRepository, CategoryRepository categoryRepository) {
         this.userService = userService;
+        this.roleRepository = roleRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -66,5 +76,15 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void logout(String token) {
         if (token != null) tokenStore.remove(token);
+    }
+
+    @Override
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll(Sort.by(Sort.Direction.ASC, "role"));
+    }
+
+    @Override
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "category"));
     }
 }

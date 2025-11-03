@@ -40,13 +40,27 @@ public class BorrowController {
             return ResponseEntity.status(401).body("Authentication required");
         }
 
-        // Validate equipment exists and has availability
-        Optional<Equipment> e = equipmentService.findById(request.getEquipment().getId());
-        if (e.isEmpty()) return ResponseEntity.badRequest().body("Invalid equipment");
+        // Basic quantity validation
+        Integer qty = request.getQuantityRequested();
+        if (qty == null || qty <= 0) {
+            return ResponseEntity.status(210).body("Please enter a valid quantity");
+        }
+
+        // Validate equipment exists (handle nulls safely)
+        Long equipmentId = request.getEquipment() != null ? request.getEquipment().getId() : null;
+        String requestedName = request.getEquipment() != null ? request.getEquipment().getName() : null;
+        Optional<Equipment> e = (equipmentId != null) ? equipmentService.findById(equipmentId) : Optional.empty();
+        if (e.isEmpty()) {
+            String msg = (requestedName != null && !requestedName.isBlank())
+                    ? requestedName + " is invalid"
+                    : "Equipment is invalid";
+            return ResponseEntity.status(210).body(msg);
+        }
 
         Equipment equipment = e.get();
-        if (equipment.getAvailableQuantity() == null || equipment.getAvailableQuantity() < request.getQuantityRequested()) {
-            return ResponseEntity.badRequest().body("Not enough items available");
+        if (equipment.getAvailableQuantity() == null || equipment.getAvailableQuantity() < qty) {
+            String nm = (equipment.getName() != null && !equipment.getName().isBlank()) ? equipment.getName() : "Equipment";
+            return ResponseEntity.status(210).body(nm + " is not available");
         }
 
         // Set the requester as the authenticated user
@@ -91,9 +105,12 @@ public class BorrowController {
         if (r.isEmpty()) return ResponseEntity.notFound().build();
 
         BorrowRequest req = r.get();
+        if (req.getStatus() != BorrowRequest.Status.PENDING) {
+            return ResponseEntity.status(210).body("Only pending requests can be approved");
+        }
         Equipment eq = req.getEquipment();
         if (eq.getAvailableQuantity() < req.getQuantityRequested()) {
-            return ResponseEntity.badRequest().body("Insufficient quantity to approve");
+            return ResponseEntity.status(210).body("Insufficient quantity to approve");
         }
 
         eq.setAvailableQuantity(eq.getAvailableQuantity() - req.getQuantityRequested());
@@ -120,10 +137,38 @@ public class BorrowController {
         if (r.isEmpty()) return ResponseEntity.notFound().build();
 
         BorrowRequest req = r.get();
+        if (req.getStatus() != BorrowRequest.Status.APPROVED) {
+            return ResponseEntity.status(210).body("Only approved requests can be marked as returned");
+        }
         Equipment eq = req.getEquipment();
         eq.setAvailableQuantity(eq.getAvailableQuantity() + req.getQuantityRequested());
         equipmentService.createOrUpdate(eq);
         req.setStatus(BorrowRequest.Status.RETURNED);
+        borrowRequestService.createRequest(req);
+        return ResponseEntity.ok(req);
+    }
+
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<?> reject(
+            @PathVariable Long id,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        User user = validateToken(authHeader);
+        if (user == null) {
+            return ResponseEntity.status(401).body("Authentication required");
+        }
+
+        // Only STAFF or ADMIN can reject
+        AuthUtil.requireStaffOrAdmin(user);
+
+        Optional<BorrowRequest> r = borrowRequestService.findById(id);
+        if (r.isEmpty()) return ResponseEntity.notFound().build();
+
+        BorrowRequest req = r.get();
+        if (req.getStatus() != BorrowRequest.Status.PENDING) {
+            return ResponseEntity.status(210).body("Only pending requests can be rejected");
+        }
+        // No inventory change on reject
+        req.setStatus(BorrowRequest.Status.REJECTED);
         borrowRequestService.createRequest(req);
         return ResponseEntity.ok(req);
     }

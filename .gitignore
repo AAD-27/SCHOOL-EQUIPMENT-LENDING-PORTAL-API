@@ -1,0 +1,22 @@
+dk# Build output
+/target/
+
+# IDE files
+*.iml
+.idea/
+.vscode/
+.project
+.classpath
+.settings/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Local overrides
+application-local.yml
+

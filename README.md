@@ -24,3 +24,17 @@ A small REST API that helps a school lend equipment to students and staff. It su
    - Staff/admin approves or rejects requests
    - Mark as returned when completed
    - Prevent overlapping bookings for the same item
+
+## Equipment management behavior and status codes
+- When an admin logs in:
+  - They can add, edit, and delete equipment via the UI and APIs.
+  - API responses:
+    - 200 OK with the saved entity for create/update.
+    - 200 OK with a success message for delete.
+    - 401 if no/invalid token.
+    - 403 if token is not ADMIN.
+    - 404 when updating/deleting a non-existent item.
+
+- When a student logs in:
+  - The UI hides add/edit/delete actions.
+  - If the student still calls those APIs, the response is 403 Forbidden 🚫.
