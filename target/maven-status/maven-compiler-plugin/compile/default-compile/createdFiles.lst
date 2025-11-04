@@ -3,10 +3,12 @@ com\bits\school\equipment\entity\Equipment.class
 com\bits\school\equipment\repository\EquipmentRepository.class
 com\bits\school\equipment\repository\BorrowRequestRepository.class
 com\bits\school\equipment\dao\BorrowRequestDao.class
+com\bits\school\equipment\config\CorsConfig$1.class
 com\bits\school\equipment\entity\Role.class
 com\bits\school\equipment\repository\RoleRepository.class
 com\bits\school\equipment\repository\CategoryRepository.class
 com\bits\school\equipment\service\BorrowRequestService.class
+com\bits\school\equipment\config\CorsConfig.class
 com\bits\school\equipment\dao\EquipmentDao.class
 com\bits\school\equipment\dao\impl\UserDaoImpl.class
 com\bits\school\equipment\controller\AuthController.class

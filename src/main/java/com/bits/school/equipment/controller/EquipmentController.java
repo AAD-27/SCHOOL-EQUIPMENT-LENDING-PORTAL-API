@@ -13,6 +13,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/equipment")
+@CrossOrigin(origins = "http://localhost:5173/", allowCredentials = "true")
+
 public class EquipmentController {
     private final EquipmentService equipmentService;
     private final AuthService authService;

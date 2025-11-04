@@ -18,6 +18,7 @@ D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\sc
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\dao\impl\BorrowRequestDaoImpl.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\entity\Equipment.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\service\impl\UserServiceImpl.java
+D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\config\CorsConfig.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\repository\UserRepository.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\repository\RoleRepository.java
 D:\Ameya\BITS\FSAD\SCHOOL-EQUIPMENT-LENDING-PORTAL-API\src\main\java\com\bits\school\equipment\EquipmentLendingApplication.java

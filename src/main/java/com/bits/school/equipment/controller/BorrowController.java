@@ -16,6 +16,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/borrow")
+@CrossOrigin(origins = "http://localhost:5173/", allowCredentials = "true")
+
 public class BorrowController {
     private final BorrowRequestService borrowRequestService;
     private final EquipmentService equipmentService;
