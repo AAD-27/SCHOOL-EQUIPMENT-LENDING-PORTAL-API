@@ -21,5 +21,7 @@ public class Equipment {
     private String conditionDescription;
     private Integer quantity;
     private Integer availableQuantity;
+    // New: if true, this item is hidden from general listing while in maintenance
+    @Column(nullable = false)
+    private boolean underMaintenance = false;
 }
-

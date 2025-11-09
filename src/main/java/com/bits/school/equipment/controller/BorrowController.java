@@ -1,17 +1,16 @@
 package com.bits.school.equipment.controller;
 
+import com.bits.school.equipment.dto.BorrowRequestDto;
 import com.bits.school.equipment.entity.BorrowRequest;
 import com.bits.school.equipment.entity.Equipment;
 import com.bits.school.equipment.entity.User;
 import com.bits.school.equipment.service.AuthService;
 import com.bits.school.equipment.service.BorrowRequestService;
 import com.bits.school.equipment.service.EquipmentService;
-import com.bits.school.equipment.service.UserService;
 import com.bits.school.equipment.util.AuthUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,42 +20,37 @@ import java.util.Optional;
 public class BorrowController {
     private final BorrowRequestService borrowRequestService;
     private final EquipmentService equipmentService;
-    private final UserService userService;
     private final AuthService authService;
 
     public BorrowController(BorrowRequestService borrowRequestService, EquipmentService equipmentService,
-                           UserService userService, AuthService authService) {
+                           AuthService authService) {
         this.borrowRequestService = borrowRequestService;
         this.equipmentService = equipmentService;
-        this.userService = userService;
         this.authService = authService;
     }
+    private static final String AUTHENTICATION_REQUIRED = "Authentication required";
 
     @PostMapping("/request")
-    public ResponseEntity<?> requestBorrow(
-            @RequestBody BorrowRequest request,
+    public ResponseEntity<Object> requestBorrow(
+            @RequestBody BorrowRequestDto dto,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         User user = validateToken(authHeader);
         if (user == null) {
-            return ResponseEntity.status(401).body("Authentication required");
+            return ResponseEntity.status(401).body(AUTHENTICATION_REQUIRED);
         }
 
         // Basic quantity validation
-        Integer qty = request.getQuantityRequested();
+        Integer qty = dto.getQuantityRequested();
         if (qty == null || qty <= 0) {
             return ResponseEntity.status(210).body("Please enter a valid quantity");
         }
 
         // Validate equipment exists (handle nulls safely)
-        Long equipmentId = request.getEquipment() != null ? request.getEquipment().getId() : null;
-        String requestedName = request.getEquipment() != null ? request.getEquipment().getName() : null;
+        Long equipmentId = dto.getEquipmentId();
         Optional<Equipment> e = (equipmentId != null) ? equipmentService.findById(equipmentId) : Optional.empty();
         if (e.isEmpty()) {
-            String msg = (requestedName != null && !requestedName.isBlank())
-                    ? requestedName + " is invalid"
-                    : "Equipment is invalid";
-            return ResponseEntity.status(210).body(msg);
+            return ResponseEntity.status(210).body("Equipment is invalid");
         }
 
         Equipment equipment = e.get();
@@ -65,7 +59,11 @@ public class BorrowController {
             return ResponseEntity.status(210).body(nm + " is not available");
         }
 
-        // Set the requester as the authenticated user
+        // Map DTO to entity and set the authenticated user as requester
+        BorrowRequest request = new BorrowRequest();
+        request.setQuantityRequested(dto.getQuantityRequested());
+        request.setFromDate(dto.getFromDate());
+        request.setToDate(dto.getToDate());
         request.setRequester(user);
         request.setEquipment(equipment);
         request.setStatus(BorrowRequest.Status.PENDING);
@@ -75,12 +73,12 @@ public class BorrowController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listAll(
+    public ResponseEntity<Object> listAll(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         User user = validateToken(authHeader);
         if (user == null) {
-            return ResponseEntity.status(401).body("Authentication required");
+            return ResponseEntity.status(401).body(AUTHENTICATION_REQUIRED);
         }
 
         // Students see only their requests, Staff/Admin see all
@@ -91,13 +89,13 @@ public class BorrowController {
     }
 
     @PostMapping("/{id}/approve")
-    public ResponseEntity<?> approve(
+    public ResponseEntity<Object> approve(
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         User user = validateToken(authHeader);
         if (user == null) {
-            return ResponseEntity.status(401).body("Authentication required");
+            return ResponseEntity.status(401).body(AUTHENTICATION_REQUIRED);
         }
 
         // Only STAFF or ADMIN can approve
@@ -123,13 +121,13 @@ public class BorrowController {
     }
 
     @PostMapping("/{id}/return")
-    public ResponseEntity<?> markReturned(
+    public ResponseEntity<Object> markReturned(
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         User user = validateToken(authHeader);
         if (user == null) {
-            return ResponseEntity.status(401).body("Authentication required");
+            return ResponseEntity.status(401).body(AUTHENTICATION_REQUIRED);
         }
 
         // Only STAFF or ADMIN can mark as returned
@@ -151,12 +149,12 @@ public class BorrowController {
     }
 
     @PostMapping("/{id}/reject")
-    public ResponseEntity<?> reject(
+    public ResponseEntity<Object> reject(
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
         User user = validateToken(authHeader);
         if (user == null) {
-            return ResponseEntity.status(401).body("Authentication required");
+            return ResponseEntity.status(401).body(AUTHENTICATION_REQUIRED);
         }
 
         // Only STAFF or ADMIN can reject

@@ -8,8 +8,9 @@ import com.bits.school.equipment.util.AuthUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/equipment")
@@ -23,9 +24,10 @@ public class EquipmentController {
         this.equipmentService = equipmentService;
         this.authService = authService;
     }
+    private static final String AUTHENTICATION_REQUIRED = "Authentication required";
 
     @GetMapping
-    public ResponseEntity<?> listAll(
+    public ResponseEntity<Object> listAll(
             @RequestParam(required = false) String category,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
@@ -34,34 +36,40 @@ public class EquipmentController {
             return ResponseEntity.status(401).body("Authentication required");
         }
 
-        if (category != null) {
-            return ResponseEntity.ok(equipmentService.findByCategory(category));
-        }
-        return ResponseEntity.ok(equipmentService.findAll());
+        List<Equipment> items = (category != null)
+                ? equipmentService.findByCategory(category)
+                : equipmentService.findAll();
+        // Hide equipment that is currently under maintenance
+        List<Equipment> visible = items.stream()
+                .filter(e -> !e.isUnderMaintenance())
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(visible);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> get(
+    public ResponseEntity<Object> get(
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         User user = validateToken(authHeader);
         if (user == null) {
-            return ResponseEntity.status(401).body("Authentication required");
+            return ResponseEntity.status(401).body(AUTHENTICATION_REQUIRED);
         }
 
         Optional<Equipment> e = equipmentService.findById(id);
-        return e.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        // map to ResponseEntity<Object> to avoid incompatible generic types
+        return e.map(eq -> ResponseEntity.ok((Object) eq))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<?> create(
+    public ResponseEntity<Object> create(
             @RequestBody Equipment equipment,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         User user = validateToken(authHeader);
         if (user == null) {
-            return ResponseEntity.status(401).body("Authentication required");
+            return ResponseEntity.status(401).body(AUTHENTICATION_REQUIRED);
         }
 
         // Only ADMIN can create equipment
@@ -72,14 +80,14 @@ public class EquipmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(
+    public ResponseEntity<Object> update(
             @PathVariable Long id,
             @RequestBody Equipment equipment,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         User user = validateToken(authHeader);
         if (user == null) {
-            return ResponseEntity.status(401).body("Authentication required");
+            return ResponseEntity.status(401).body(AUTHENTICATION_REQUIRED);
         }
 
         // Only ADMIN can update equipment
@@ -92,13 +100,13 @@ public class EquipmentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(
+    public ResponseEntity<Object> delete(
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         User user = validateToken(authHeader);
         if (user == null) {
-            return ResponseEntity.status(401).body("Authentication required");
+            return ResponseEntity.status(401).body(AUTHENTICATION_REQUIRED);
         }
 
         // Only ADMIN can delete equipment

@@ -39,7 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
+    public ResponseEntity<Object> signup(@RequestBody SignupRequest request) {
         // 210 validation: duplicate email
         Optional<User> existing = userService.findByEmail(request.getEmail());
         if (existing.isPresent()) {
@@ -50,7 +50,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<Object> login(@RequestBody LoginRequest request) {
         // 210 validation: wrong password when email exists
         Optional<User> userOpt = userService.findByEmail(request.getEmail());
         if (userOpt.isPresent()) {

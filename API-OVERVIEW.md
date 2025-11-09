@@ -74,3 +74,38 @@ Notes
 - Staff/admin approves or rejects requests
 - Mark as returned when completed
 - Prevent overlapping bookings for the same item
+
+4. Damage / Maintenance 🛠️ (ADMIN only)
+- A damage report is created when equipment is found damaged.
+- On creation, the original equipment row is DELETED to hide it from all equipment listings.
+- Status flow: REPORTED → IN_MAINTENANCE → EQUIPMENT_REPAIRED
+- On REPAIRED, the equipment is RECREATED as a new row (will have a new id).
+- If there are active borrow requests for the equipment (PENDING/APPROVED/ISSUED), creation is blocked with a 210 message.
+
+### Endpoints (Damage)
+- POST /api/damages — Create a damage report (ADMIN). Body: { equipmentId, description }.
+  - Behavior: snapshots the equipment data and deletes the equipment row.
+  - Validation: equipmentId & non-blank description required. Returns 210 on validation failure.
+- GET /api/damages — List all damage reports (ADMIN).
+- GET /api/damages/{id} — Get a single damage report (ADMIN).
+- POST /api/damages/{id}/approve — Mark a report as IN_MAINTENANCE (ADMIN). (Equipment is already deleted.)
+- POST /api/damages/{id}/repaired — Mark a report as EQUIPMENT_REPAIRED and recreate the equipment row (ADMIN).
+
+### Damage Report Data
+- id, equipmentId (original, deleted), description, status (REPORTED | IN_MAINTENANCE | EQUIPMENT_REPAIRED), createdAt, updatedAt, repairedEquipmentId (new id after repair or null)
+
+```curl
+# Create damage report
+curl -X POST http://localhost:8083/equipment-service/api/damages \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"equipmentId":1, "description":"Screen cracked"}'
+
+# Approve (enter maintenance)
+curl -X POST http://localhost:8083/equipment-service/api/damages/5/approve \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+# Mark repaired
+curl -X POST http://localhost:8083/equipment-service/api/damages/5/repaired \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+```
